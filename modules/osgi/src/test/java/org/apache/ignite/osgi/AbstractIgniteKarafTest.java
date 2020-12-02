@@ -25,8 +25,10 @@ import java.util.Set;
 import javax.inject.Inject;
 import org.apache.karaf.features.FeaturesService;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.karaf.options.KarafFeaturesOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
@@ -76,15 +78,19 @@ public abstract class AbstractIgniteKarafTest {
 
             // Specify which version of Karaf to use.
             karafDistributionConfiguration()
-                .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz")
+                .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf")
+                    .type("tar.gz")
                     .versionAsInProject())
                 .karafVersion(System.getProperty("karafVersion"))
                 .useDeployFolder(false)
                 .unpackDirectory(new File("target/paxexam/unpack")),
 
-            // Add JUnit bundles.
-            junitBundles(),
+            CoreOptions.keepCaches(),
 
+            // Add JUnit bundles.
+            junitBundles()
+
+            /*
             // Add the additional JRE exports that Ignite requires.
             editConfigurationFileExtend("etc/jre.properties", "jre-1.7", "sun.nio.ch"),
             editConfigurationFileExtend("etc/jre.properties", "jre-1.8", "sun.nio.ch"),
@@ -100,6 +106,8 @@ public abstract class AbstractIgniteKarafTest {
 
             // Propagate the projectVersion system property.
             systemProperty("projectVersion").value(System.getProperty("projectVersion"))
+
+             */
         );
     }
 

@@ -19,7 +19,6 @@ package org.apache.ignite.osgi;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import org.apache.karaf.features.Feature;
 import org.junit.Test;
@@ -37,7 +36,9 @@ import static org.junit.Assert.assertTrue;
 /**
  * Pax Exam test class to check if all features could be resolved and installed.
  */
-public class IgniteKarafFeaturesInstallationTest extends AbstractIgniteKarafTest {
+public class IgniteCoreKarafFeatureInstallationTest extends AbstractIgniteKarafTest {
+    /** Number of features expected to exist. */
+    private static final int EXPECTED_FEATURES = 25;
 
     /**
      * Container configuration.
@@ -56,19 +57,39 @@ public class IgniteKarafFeaturesInstallationTest extends AbstractIgniteKarafTest
      */
     @Test
     public void testAllBundlesActiveAndFeaturesInstalled() throws Exception {
-        Bundle igniteOsgiBundle = null;
+        // Asssert all bundles except fragments are ACTIVE.
+        for (Bundle b : bundleCtx.getBundles()) {
+            System.out.println(String.format("Checking state of bundle [symbolicName=%s, state=%s]",
+                b.getSymbolicName(), b.getState()));
 
-        // Assert ignite-osgi bundle is installed
-        for (final Bundle b : bundleCtx.getBundles()) {
-            if ("org.apache.ignite.ignite-osgi".equals(b.getSymbolicName())) {
-                igniteOsgiBundle = b;
-            }
+            if (b.getHeaders().get(Constants.FRAGMENT_HOST) == null)
+                assertTrue(b.getState() == Bundle.ACTIVE);
         }
 
-        assertNotNull("Expecting ignite-osgi bundle to be found as installed bundle but was not", igniteOsgiBundle);
+        // Check that according to the FeaturesService, all Ignite features except ignite-log4j are installed.
+        Feature[] features = featuresSvc.getFeatures(IGNITE_FEATURES_NAME_REGEX);
+
+        assertNotNull(features);
+        assertEquals(EXPECTED_FEATURES, features.length);
+
+        for (Feature f : features) {
+            if (IGNORED_FEATURES.contains(f.getName()))
+                continue;
+
+            boolean installed = featuresSvc.isInstalled(f);
+
+            System.out.println(String.format("Checking if feature is installed [featureName=%s, installed=%s]",
+                f.getName(), installed));
+
+            assertTrue(installed);
+            assertEquals(PROJECT_VERSION.replaceAll("-", "."), f.getVersion().replaceAll("-", "."));
+        }
     }
 
+    /**
+     * @return Features list.
+     */
     @Override protected List<String> featuresToInstall() {
-        return Arrays.asList("ignite-core");
+        return Arrays.asList("ignite-all", "ignite-hibernate");
     }
 }

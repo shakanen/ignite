@@ -98,7 +98,7 @@
         <jsonlib.version>2.4</jsonlib.version>
         <jtidy.version>r938</jtidy.version>
         <kafka.version>2.0.1</kafka.version>
-        <karaf.version>4.0.2</karaf.version>
+        <karaf.version>4.1.5</karaf.version>
         <log4j.version>2.11.0</log4j.version>
         <lucene.bundle.version>7.4.0_1</lucene.bundle.version>
         <lucene.version>7.4.0</lucene.version>
@@ -729,7 +729,6 @@
                 <version>2.5.2</version>
                 <inherited>false</inherited>
                 <configuration>
-                    <skip>true</skip>
                 </configuration>
             </plugin>
 

@@ -34,6 +34,11 @@
     <version>2.8.0-SNAPSHOT</version>
     <url>http://ignite.apache.org</url>
 
+    <properties>
+        <karaf.version>4.1.5</karaf.version>
+        <slf4j15.version>1.5.11</slf4j15.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.ignite</groupId>
@@ -73,6 +78,19 @@
             <artifactId>apache-karaf</artifactId>
             <version>${karaf.version}</version>
             <type>tar.gz</type>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.karaf</groupId>
+                    <artifactId>org.apache.karaf.client</artifactId>
+                </exclusion>
+            </exclusions>
+		</dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j15.version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -123,7 +141,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Fragment-Host>org.apache.ignite.ignite-core</Fragment-Host>
+						<Fragment-Host>org.apache.ignite.ignite-core;version=${project.version}</Fragment-Host>
                     </instructions>
                 </configuration>
             </plugin>
